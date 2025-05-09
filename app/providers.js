@@ -7,11 +7,11 @@ import React, { useState, createContext } from 'react';
 
 // 1. Import your existing context providers
 //    Adjust the paths if you move your context files (e.g., into an `app/contexts` folder)
-import { AuthProvider } from '../src/contexts/AuthContext';
-import { ServiceProvider } from '../src/contexts/ServiceContext';
+import { AuthProvider } from '../app/contexts/AuthContext';
+import { ServiceProvider } from '../app/contexts/ServiceContext';
 
 // 2. Import the AuthModal component if its state is managed globally here
-import AuthModal from '../src/components/Auth/AuthModal'; // Adjust path
+import AuthModal from '../components/Auth/AuthModal'; // Adjust path
 
 // 3. Recreate or import the AuthModalContext (originally defined in App.js)
 //    It's often cleaner to define contexts in their own files, but recreating here is fine too.

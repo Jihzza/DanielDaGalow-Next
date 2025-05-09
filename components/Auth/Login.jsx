@@ -7,7 +7,7 @@
       import Link from 'next/link';
 
       // Adjust context/utility import paths based on your new project structure
-      import { useAuth } from '../../contexts/AuthContext';
+      import { useAuth } from '../../app/contexts/AuthContext';
       import { useTranslation } from 'react-i18next';
 
       // Props: isModal (boolean), onSuccess (function), onForgotPassword (function)

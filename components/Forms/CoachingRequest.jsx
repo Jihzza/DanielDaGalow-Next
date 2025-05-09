@@ -182,71 +182,91 @@ function PaymentStep({ selectedTier, requestId, onPaymentConfirmed, formData }) 
   const [paymentStarted, setPaymentStarted] = useState(false);
   const [paymentConfirmedLocal, setPaymentConfirmedLocal] = useState(false);
   const [pollingError, setPollingError] = useState(null);
+  // No changes to TIER_PRICES_CENTS or TIER_PLAN_NAMES
 
   const TIER_PRICES_CENTS = { Weekly: 4000, Daily: 9000, Priority: 23000 };
   const TIER_PLAN_NAMES = { Weekly: "Basic", Daily: "Standard", Priority: "Premium" };
 
-  const priceInCents = TIER_PRICES_CENTS[selectedTier] || TIER_PRICES_CENTS["Weekly"]; // Default to Basic if tier invalid
+
+  const priceInCents = TIER_PRICES_CENTS[selectedTier] || TIER_PRICES_CENTS["Weekly"];
   const priceDisplay = `€${(priceInCents / 100).toFixed(2)}`;
   const planName = TIER_PLAN_NAMES[selectedTier] || TIER_PLAN_NAMES["Weekly"];
 
   useEffect(() => {
     const pendingId = localStorage.getItem('pendingCoachingId');
-    if (pendingId && pendingId === String(requestId)) { // Ensure requestId is string for comparison
+    if (pendingId && pendingId === String(requestId)) {
       setPaymentStarted(true);
-      // localStorage.removeItem('pendingCoachingId'); // Remove only on success/failure
     }
   }, [requestId]);
 
   const handleStripeRedirect = async () => {
     setPollingError(null);
     if (!requestId || !selectedTier || !formData.email) {
-      setPollingError("Missing details for payment.");
+      setPollingError(t('coaching_request.payment.error_missing_details', "Missing details for payment."));
       return;
     }
     try {
       localStorage.setItem('pendingCoachingId', String(requestId));
-      // ** API Call Change: Point to Next.js API Route **
-      const { data } = await axios.post("/api/stripe/checkout/coaching", { // Example path
-        requestId, tier: selectedTier, email: formData.email,
-        // productId: "prod_SBC2yFeKHqFXZr", // This seems specific, ensure it's correct or dynamic
-        // isTestBooking: false // Add if you have test mode for coaching
+      // This call should already be correct if you followed Step 10
+      const { data } = await axios.post("/api/stripe/checkout/coaching", {
+        requestId,
+        tier: selectedTier,
+        email: formData.email,
+        name: formData.name, // Pass name for Stripe product data
+        // isTestBooking: false, // Add if you have a test mode for coaching
       });
       window.open(data.url, '_blank');
       setPaymentStarted(true);
     } catch (error) {
       console.error("Error creating Stripe subscription:", error);
-      setPollingError(error.response?.data?.error || "Failed to start subscription process.");
+      setPollingError(error.response?.data?.error || t('coaching_request.payment.error_stripe_session',"Failed to start subscription process."));
     }
   };
 
   useEffect(() => {
     if (!paymentStarted || !requestId || paymentConfirmedLocal) return;
-    const interval = setInterval(async () => {
+
+    let intervalId; // To store the interval ID for cleanup
+
+    const checkStatus = async () => {
       try {
-        // ** API Call Change: Point to Next.js API Route **
-        const response = await axios.get(`/api/stripe/coaching-status?id=${requestId}`); // Example path
+        // *** UPDATED API CALL for status check ***
+        const response = await axios.get(`/api/status/coaching/${requestId}`);
         if (response.data.paymentStatus === "paid") {
           setPaymentConfirmedLocal(true);
           onPaymentConfirmed(true);
-          clearInterval(interval);
+          clearInterval(intervalId);
           localStorage.removeItem('pendingCoachingId');
-        } else if (response.data.paymentStatus === "pending" && Math.random() < 0.2) {
-          // ** API Call Change: Point to Next.js API Route **
-          // await axios.get(`/api/stripe/coaching-status/force-update?id=${requestId}`); // Example path
-          // Re-check after force update attempt
-          // const verifyResponse = await axios.get(`/api/stripe/coaching-status?id=${requestId}`);
-          // if (verifyResponse.data.paymentStatus === "paid") { /* ... */ }
+        } else if (response.data.paymentStatus === "pending" && Math.random() < 0.1) { // Reduced frequency of force update
+          // Attempt to force update less frequently
+          console.log(`Attempting to force update status for coaching request: ${requestId}`);
+          // *** UPDATED API CALL for force update (now POST) ***
+          try {
+            await axios.post(`/api/status/coaching/force-update/${requestId}`);
+            // No need to immediately re-check here, the next interval will do it.
+          } catch (forceUpdateError) {
+            console.error("Error during force update attempt:", forceUpdateError);
+            // Don't set pollingError here unless it's persistent
+          }
         }
       } catch (error) {
-        console.error("Error checking payment status:", error);
-        setPollingError("Error checking subscription status. Please refresh or contact support if payment was made.");
-        // clearInterval(interval); // Optionally stop polling on error
+        console.error("Error checking coaching payment status:", error);
+        // Avoid setting pollingError for transient network issues,
+        // but consider a counter for repeated failures.
+        // setPollingError(t('coaching_request.payment.error_polling',"Error checking subscription status. Please refresh or contact support if payment was made."));
+        // clearInterval(intervalId); // Decide if you want to stop polling on error
       }
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [paymentStarted, requestId, onPaymentConfirmed, paymentConfirmedLocal]);
+    };
 
+    // Initial check
+    checkStatus();
+    // Set up polling
+    intervalId = setInterval(checkStatus, 7000); // Poll every 7 seconds
+
+    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+  }, [paymentStarted, requestId, onPaymentConfirmed, paymentConfirmedLocal, t]); // Added t to dependencies
+
+  // Rest of the PaymentStep JSX remains the same...
   return (
     <div className="max-w-md mx-auto">
       <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/20 overflow-hidden mb-6">
@@ -275,8 +295,8 @@ function PaymentStep({ selectedTier, requestId, onPaymentConfirmed, formData }) 
         {paymentStarted && !paymentConfirmedLocal && !pollingError && <p className="text-white/60 text-sm text-center">{t('coaching_request.payment.window_info', 'Payment window opened. Please complete and return.')}</p>}
       </div>
       <div className="mt-6 flex justify-center items-center gap-4">
-        <Image src="/assets/icons/stripe.svg" alt="Secure payments by Stripe" width={80} height={32} className="h-8 opacity-90" />
-        <Image src="/assets/icons/ssl-lock.svg" alt="SSL Secured" width={32} height={32} className="h-8 opacity-90" />
+        <img src="/assets/icons/stripe.svg" alt="Secure payments by Stripe" width={80} height={32} className="h-8 opacity-90" />
+        <img src="/assets/icons/ssl-lock.svg" alt="SSL Secured" width={32} height={32} className="h-8 opacity-90" />
       </div>
     </div>
   );

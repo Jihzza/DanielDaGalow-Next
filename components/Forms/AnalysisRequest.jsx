@@ -8,8 +8,8 @@ import { v4 as uuidv4 } from 'uuid'; // Ensure 'uuid' package is installed
 
 // --- IMPORTANT: Adjust these import paths ---
 // Verify these paths match your new Next.js project structure.
-import { supabase } from "../../utils/supabaseClient";
-import { useAuth } from "../../contexts/AuthContext";
+import { supabase } from "../../lib/supabase/client";
+import { useAuth } from "../../app/contexts/AuthContext";
 // Corrected AuthModalContext import:
 import { AuthModalContext } from "../../app/providers"; // Assuming providers.js is in app/
 import { useScrollToTopOnChange } from "../../hooks/useScrollToTopOnChange";

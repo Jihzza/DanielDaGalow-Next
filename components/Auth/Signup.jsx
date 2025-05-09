@@ -7,7 +7,7 @@
       import Link from 'next/link'; // Import Link for non-modal version
 
       // Adjust context/utility import paths
-      import { useAuth } from '../../contexts/AuthContext';
+      import { useAuth } from '../../app/contexts/AuthContext';
       import { useTranslation } from 'react-i18next';
 
       // Props: isModal (boolean), onSuccess (function), onSwitchToLogin (function)
