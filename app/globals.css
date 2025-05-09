@@ -1,26 +1,152 @@
-@import "tailwindcss";
+/* app/globals.css */
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Tailwind Directives (from src/index.css) */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* Global Styles from src/index.css */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;  /* Safari */
+  -ms-user-select: none;      /* IE 10 and IE 11 */
+  user-select: none;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html {
+  scroll-behavior: smooth;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* only hides scrollbars inside #bottom-carousel */
+#bottom-carousel .hide-scrollbar {
+  -ms-overflow-style: none;  /* IE & Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+#bottom-carousel .hide-scrollbar::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari, Opera */
+}
+
+.carousel-container {
+  height: 40px; /* Or your desired height */
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.05); /* Example background */
+  border-radius: 8px; /* Example border-radius */
+}
+
+.empty-carousel-container {
+  height: 40px; /* Match carousel-container height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.05); /* Example background */
+  border-radius: 8px; /* Example border-radius */
+  /* Add any other styling for when the carousel is empty */
+}
+
+
+/* Global Styles from src/App.css */
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.App-header {
+  background-color: #282c34; /* Example, adjust if not used */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
 }
+
+.App-link {
+  color: #61dafb; /* Example, adjust if not used */
+}
+
+/* Swiper global override (consider scoping if possible or if it causes issues) */
+.swiper {
+    z-index: 0 !important; /* Be cautious with !important; ensure it's necessary */
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out forwards;
+}
+
+/* Typing cursor animation */
+.typing-cursor {
+  display: inline-block;
+  width: 8px; /* Adjust as needed */
+  height: 1.2em; /* Adjust to match text line-height */
+  background-color: currentColor; /* Or a specific color */
+  animation: blink 1s step-end infinite;
+  margin-left: 2px; /* Adjust spacing */
+  vertical-align: baseline; /* Align with text */
+}
+
+@keyframes blink {
+  from, to { background-color: transparent }
+  50% { background-color: currentColor; } /* Or a specific color */
+}
+
+
+/* Global Styles from src/phone-input-overrides.css */
+/* 1) Keep the button’s selected-flag box in Oxford‑Blue */
+.react-tel-input .selected-flag {
+    background-color: #002147 !important;   /* your bg‑oxfordBlue */
+  }
+
+  /* 3) Style the country list container */
+  .react-tel-input .country-list {
+    background-color: #002147   !important;  /* Oxford‑Blue bg */
+    border-radius: 1rem         !important;
+    overflow: hidden            !important;
+  }
+
+  /* 4) Highlight hovered/selected items in Oxford‑Blue tint */
+  .react-tel-input .country-list .country.highlight {
+    background-color: rgba(0, 33, 71, 0.2) !important;  /* 20% Oxford‑Blue */
+  }
+
+/* You might have other global styles from src/index.css or src/App.css.
+   Ensure all general, non-component-specific styles are moved here.
+   Component-specific styles are best kept with their components or as CSS Modules. */

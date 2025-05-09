@@ -1,103 +1,70 @@
-import Image from "next/image";
+// app/page.js
+// This file defines the content for your homepage route ('/').
 
-export default function Home() {
+import React from 'react';
+
+// --- Import Your Homepage Section Components ---
+// !! CRITICAL: Ensure these paths are correct for your new Next.js project structure !!
+// Example: import Hero from '../components/home-sections/Hero';
+// OR if you set up path aliases: import Hero from '@/components/home-sections/Hero';
+
+import Hero from '../components/home-sections/Hero'; // Assuming components are now in a root 'components' folder
+import About from '../components/home-sections/About';
+import Services from '../components/home-sections/Services';
+import Coaching from '../components/home-sections/Coaching';
+import Analysis from '../components/home-sections/Analysis';
+import Projects from '../components/home-sections/Projects';
+import VentureInvestment from '../components/home-sections/VentureInvestment';
+import Testimonials from '../components/home-sections/Testimonials';
+import Interviews from '../components/home-sections/Interviews';
+import IncentivePage from '../components/home-sections/IncentivePage';
+import OtherWins from '../components/home-sections/OtherWins';
+import MergedServiceForm from '../components/Forms/MergedServiceForm';
+import BottomCarouselPages from '../components/carousel/BottomCarouselPages';
+
+/**
+ * HomePage Component (Can remain a Server Component by default)
+ *
+ * This component renders the main content for the root route ('/').
+ * It aggregates the various sections that make up the homepage.
+ * The individual imported sections handle their own client-side logic
+ * if they are marked with "use client";
+ */
+export default function HomePage() {
+  // Props like 'openAuthModal' are no longer passed from here.
+  // Client components like Header, or sections like Testimonials,
+  // will use the AuthModalContext directly if they need to trigger the modal.
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    <>
+      {/* Render the sections in the desired order */}
+      <Hero />
+      <About />
+      <Services /> {/* No longer needs onAuthModalOpen prop */}
+      <Coaching />
+      <Analysis />
+      <Projects />
+      <VentureInvestment />
+      <Interviews />
+      <IncentivePage />
+      <Testimonials /> {/* No longer needs onAuthModalOpen prop */}
+      <OtherWins />
+      <MergedServiceForm /> {/* This is the main form section */}
+      <BottomCarouselPages /> {/* Contains FAQs, Bugs, SocialMedia */}
+    </>
   );
 }
+
+// --- Homepage Specific Metadata ---
+// This defines SEO metadata (title, description, etc.) for this specific page.
+// It will override or merge with the default metadata in app/layout.js.
+export const metadata = {
+  title: "Daniel Da'Galow - Unlock Your Potential", // Specific title for the homepage
+  description: "Master mindset, wealth, and relationships with Daniel Da'Galow. Explore consultations, coaching, analysis, and investment opportunities.",
+  // You can add more specific OpenGraph tags for the homepage here if desired:
+  // openGraph: {
+  //   title: "Daniel Da'Galow - Unlock Your Potential",
+  //   description: "Explore consultations, coaching, analysis, and investment opportunities.",
+  //   images: ['/assets/og-image-homepage.jpg'], // Ensure image is in the public/assets folder
+  // },
+};
